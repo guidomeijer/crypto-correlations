@@ -19,8 +19,8 @@ from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProj
 
 # Settings
 BIN_SIZE = 60  # seconds
-TICKER = 'DOGE'
-NAME = 'Dogecoin'
+TICKER = 'BTC'
+NAME = 'Bitcoin'
 MIN_R = 0.85
 
 # Set figure directory
