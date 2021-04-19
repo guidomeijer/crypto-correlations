@@ -6,11 +6,11 @@ Created on Sun Apr 18 15:24:39 2021
 @author: Guido Meijer
 """
 
-import os
 import numpy as np
+import pandas as pd
 import datetime
 from os import mkdir
-from os.path import join, dirname, exists
+from os.path import join, dirname, exists, realpath
 from scipy.stats import pearsonr
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -21,18 +21,23 @@ from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProj
 BIN_SIZE = 60  # seconds
 TICKER = 'BTC'
 NAME = 'Bitcoin'
+PLOT = False
 MIN_R = 0.85
+CACHE_DIR = '/media/guido/Data/AllenNeuropixel'
 
-# Set figure directory
-fig_dir = join(dirname(os.path.realpath(__file__)), 'exported_figs')
+# Set directories
+fig_dir = join(dirname(realpath(__file__)), 'exported_figs')
 if not exists(fig_dir):
     mkdir(fig_dir)
 this_fig_dir = join(fig_dir, NAME)
 if not exists(this_fig_dir):
     mkdir(this_fig_dir)
+data_dir = join(dirname(realpath(__file__)), 'data')
+if not exists(data_dir):
+    mkdir(data_dir)
 
 # Query sessions
-manifest_path = os.path.join("/media/guido/Data/AllenNeuropixel", "manifest.json")
+manifest_path = join(CACHE_DIR, 'manifest.json')
 cache = EcephysProjectCache.from_warehouse(manifest=manifest_path)
 sessions = cache.get_session_table()
 
@@ -56,6 +61,7 @@ def get_crypto_vector(ticker, start_time):
 
 
 # Loop through sessions
+results_df = pd.DataFrame()
 for i, session_id in enumerate(sessions.index.values):
     print(f'Processing session {session_id} [{i+1} of {sessions.index.values.shape[0]}]')
     session = cache.get_session_data(session_id)
@@ -71,8 +77,13 @@ for i, session_id in enumerate(sessions.index.values):
         # activity_vector = np.convolve(activity_vector, np.ones((3,))/3)
         r, p = pearsonr(activity_vector, crypto_vector[:activity_vector.shape[0]])
 
+        # Add to results dataframe
+        results_df = results_df.append(pd.DataFrame(index=[results_df.shape[0] + 1], data={
+            'r': r, 'p': p, 'session_id': session_id, 'unit_id': unit_id,
+            'acronym': session.units.loc[unit_id]['ecephys_structure_acronym']}))
+
         # Plot highly correlated neurons
-        if r > MIN_R:
+        if (r > MIN_R) & PLOT:
             time_vector = np.linspace(0, activity_vector.shape[0]*BIN_SIZE, activity_vector.shape[0]) / 60
             sns.set_context('paper')
             f, ax1 = plt.subplots(1, 1, figsize=(5, 5), dpi=300)
@@ -95,3 +106,6 @@ for i, session_id in enumerate(sessions.index.values):
             plt.tight_layout()
             plt.savefig(join(this_fig_dir, f'{TICKER}_ses-{session_id}_unit-{unit_id}'))
             plt.close(f)
+
+# Save results
+results_df.to_csv(join(data_dir, f'{NAME}_correlations.csv'))

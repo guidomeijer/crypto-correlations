@@ -1,2 +1,4 @@
 allensdk
 Historic-Crypto
+statsmodels
+ibllib
