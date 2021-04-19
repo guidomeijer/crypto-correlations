@@ -68,7 +68,7 @@ ax1.hist(eth_df['r'], histtype='step', facecolor=sns.color_palette('colorblind')
          label='Ethereum', lw=2, bins=25)
 ax1.hist(rand_df['r'], histtype='step', facecolor=sns.color_palette('colorblind')[2],
          label='Random', lw=2, bins=25)
-ax1.set(title='Pearson correlation coefficient (r)', ylabel='Neuron count')
+ax1.set(title='Pearson correlation coefficient (r)', ylabel='Neuron count', ylim=[0, 6000])
 ax1.legend(frameon=False)
 
 ax2.hist(btc_df['p'], histtype='step', facecolor=sns.color_palette('colorblind')[0],
@@ -77,7 +77,7 @@ ax2.hist(eth_df['p'], histtype='step', facecolor=sns.color_palette('colorblind')
          label='Ethereum', lw=2, bins=25)
 ax2.hist(rand_df['p'], histtype='step', facecolor=sns.color_palette('colorblind')[2],
          label='Random', lw=2, bins=25)
-ax2.set(title='Pearson correlation (p-values)', ylabel='Neuron count')
+ax2.set(title='Pearson correlation (p-values)', ylabel='Neuron count', ylim=[0, 30000])
 ax2.legend(frameon=False)
 
 plt.tight_layout()

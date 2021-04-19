@@ -55,6 +55,7 @@ for i, session_id in enumerate(sessions.index.values):
         # Add to results dataframe
         results_df = results_df.append(pd.DataFrame(index=[results_df.shape[0] + 1], data={
             'r': r, 'p': p, 'session_id': session_id, 'unit_id': unit_id,
+            'subject': session.specimen_name,
             'acronym': session.units.loc[unit_id]['ecephys_structure_acronym']}))
 
 # Save results

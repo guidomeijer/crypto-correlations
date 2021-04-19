@@ -19,8 +19,8 @@ from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProj
 
 # Settings
 BIN_SIZE = 60  # seconds
-TICKER = 'BTC'
-NAME = 'Bitcoin'
+TICKER = 'ETH'
+NAME = 'Ethereum'
 PLOT = False
 MIN_R = 0.85
 CACHE_DIR = '/media/guido/Data/AllenNeuropixel'
@@ -80,6 +80,7 @@ for i, session_id in enumerate(sessions.index.values):
         # Add to results dataframe
         results_df = results_df.append(pd.DataFrame(index=[results_df.shape[0] + 1], data={
             'r': r, 'p': p, 'session_id': session_id, 'unit_id': unit_id,
+            'subject': session.specimen_name,
             'acronym': session.units.loc[unit_id]['ecephys_structure_acronym']}))
 
         # Plot highly correlated neurons
