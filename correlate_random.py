@@ -29,6 +29,8 @@ sessions = cache.get_session_table()
 
 
 def get_activity_vector(spike_times, bin_size):
+    spike_times = spike_times[~np.isnan(spike_times)]  # get rid of some weird spikes
+    spike_times = spike_times[(spike_times > 0.1) & (spike_times < 18000)]
     time_bins = np.arange(0, spike_times[-1], bin_size)
     spike_bins = np.empty(time_bins.shape[0])
     for i in range(len(time_bins[:-2])):
