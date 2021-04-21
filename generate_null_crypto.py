@@ -15,7 +15,7 @@ from os.path import join, dirname, exists, realpath
 from Historic_Crypto import HistoricalData
 
 # Settings
-TICKER = 'ETH'
+TICKER = 'BTC'
 ITERATIONS = 1000
 BIN_SIZE = 60  # seconds
 DURATION = 5  # hours

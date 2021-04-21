@@ -109,8 +109,8 @@ for i, session_id in enumerate(sessions.index.values):
         # Plot highly correlated neurons
         if (r > MIN_R) & PLOT:
             time_vector = np.linspace(0, activity_vector.shape[0]*BIN_SIZE, activity_vector.shape[0]) / 60
-            sns.set_context('paper')
-            f, ax1 = plt.subplots(1, 1, figsize=(5, 5), dpi=300)
+            sns.set_context('talk')
+            f, ax1 = plt.subplots(1, 1, figsize=(6, 5), dpi=150)
             lns1 = ax1.plot(time_vector, activity_vector, color=sns.color_palette('colorblind')[0],
                             label='Firing rate (spikes/s)')
             ax1.set(xlabel='Time (min)', title=these_units.loc[unit_id]['region'],
