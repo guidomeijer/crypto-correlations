@@ -51,7 +51,7 @@ for i, session_id in enumerate(sessions.index.values):
 
         # Correlate neuron activity with random vector
         activity_vector = get_activity_vector(session.spike_times[unit_id], BIN_SIZE)
-        random_vector = np.random.rand(activity_vector.shape[0])
+        random_vector = np.random.rand(activity_vector.shape[0]) * 100 + 100
         r, p = pearsonr(activity_vector, random_vector)
 
         # Add to results dataframe

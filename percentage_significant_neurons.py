@@ -25,6 +25,9 @@ controls_df = pd.read_csv(join(data_dir, 'Ethereum_controls.csv'))
 fdr_sig_btc, _ = fdrcorrection(btc_df['p'])
 fdr_sig_eth, _ = fdrcorrection(eth_df['p'])
 fdr_sig_rand, _ = fdrcorrection(rand_df['p'])
+fdr_sig_shuffle, _ = fdrcorrection(controls_df['p_shuffle'])
+fdr_sig_permut, _ = fdrcorrection(controls_df['p_permutation'])
+fdr_sig_linshift, _ = fdrcorrection(controls_df['p_linshift'])
 
 # %% Plot
 sns.set_context('talk')
@@ -86,14 +89,14 @@ sns.despine(trim=True)
 plt.savefig(join(fig_dir, 'histogram_correlation'))
 
 sns.set_context('talk')
-f, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 5), dpi=150, sharey=False)
+f, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 5), dpi=150, sharey=False)
 ax1.bar(np.arange(3), [(np.sum(controls_df['p_shuffle'] < 0.05) / controls_df.shape[0]) * 100,
                        (np.sum(controls_df['p_permutation'] < 0.05) / controls_df.shape[0]) * 100,
                        (np.sum(controls_df['p_linshift'] < 0.05) / controls_df.shape[0]) * 100],
         color=sns.color_palette('colorblind')[0])
 ax1.plot([-0.75, 2.75], [5, 5], ls='--', color=[.5, .5, .5])
 ax1.set(title='Significantly correlated neurons', ylabel='Percentage',
-        ylim=[0, 80], xlim=[-0.75, 2.75],
+        ylim=[0, 50], xlim=[-0.75, 2.75],
         xticks=np.arange(3), xticklabels=['Shuffle', 'Permutation', 'Linshift'])
 
 ax2.hist(controls_df['p_shuffle'] , histtype='step', facecolor=sns.color_palette('colorblind')[0],
@@ -102,7 +105,18 @@ ax2.hist(controls_df['p_permutation'] , histtype='step', facecolor=sns.color_pal
          label='Permutation', lw=2, bins=25)
 ax2.hist(controls_df['p_linshift'] , histtype='step', facecolor=sns.color_palette('colorblind')[2],
          label='Linshift', lw=2, bins=25)
-ax2.set(title='Pearson correlation (p-values)', ylabel='Neuron count', ylim=[0, 30000])
+ax2.set(title='Pearson correlation (p-values)', ylabel='Neuron count', ylim=[0, 20000])
 ax2.legend(frameon=False)
 
+ax3.bar(np.arange(3), [(np.sum(fdr_sig_shuffle) / fdr_sig_shuffle.shape[0]) * 100,
+                       (np.sum(fdr_sig_permut) / fdr_sig_permut.shape[0]) * 100,
+                       (np.sum(fdr_sig_linshift) / fdr_sig_linshift.shape[0]) * 100],
+        color=sns.color_palette('colorblind')[0])
+ax3.plot([-0.75, 2.75], [5, 5], ls='--', color=[.5, .5, .5])
+ax3.set(title='FDR-corrected significant neurons', ylabel='Percentage',
+        ylim=[0, 50], xlim=[-0.75, 2.75],
+        xticks=np.arange(3), xticklabels=['Shuffle', 'Permutation', 'Linshift'])
+
+plt.tight_layout()
 sns.despine(trim=False)
+plt.savefig(join(fig_dir, 'control_correlation'))
