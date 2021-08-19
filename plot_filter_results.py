@@ -7,16 +7,25 @@ By: Guido Meijer
 
 import numpy as np
 import datetime
+from os.path import join
+from os.path import join, realpath, dirname, exists
+import pandas as pd
 import seaborn as sns
 from scipy.signal import filtfilt, butter
 import matplotlib.pyplot as plt
 from Historic_Crypto import HistoricalData
 
+# Settings
 BIN_SIZE = 60  # seconds
 TICKER = 'ETH'
 NAME = 'Ethereum'
 FILT = {'high_pass': 0.1, 'band_stop': [0.3, 2], 'low_pass': 2}
 CRYPTO_TIME = datetime.datetime.strptime('2019-01-19-00-54', "%Y-%m-%d-%H-%M")  # some random time
+
+# Load in data (run correlate_crypto_filter to get these files)
+data_dir = join(dirname(realpath(__file__)), 'data')
+btc_df = pd.read_csv(join(data_dir, 'Bitcoin_correlations_filter.csv'))
+eth_df = pd.read_csv(join(data_dir, 'Ethereum_correlations_filter.csv'))
 
 
 def butter_filter(signal, highpass_freq=None, lowpass_freq=None, order=4, fs=60):
@@ -61,6 +70,13 @@ def get_crypto_vector(ticker, start_time):
 crypto_vector = get_crypto_vector(TICKER, CRYPTO_TIME)
 time_vector = np.linspace(0, crypto_vector.shape[0]*BIN_SIZE, crypto_vector.shape[0]) / 60
 
+# Get perc change signficant neurons
+n_neurons = len(btc_df.groupby('unit_id').size())
+no_filt = np.sum(btc_df.loc[btc_df['filt'] == 'none', 'p'] < 0.05) / n_neurons
+high_pass = np.sum(btc_df.loc[btc_df['filt'] == 'high_pass', 'p'] < 0.05) / n_neurons
+band_stop = np.sum(btc_df.loc[btc_df['filt'] == 'band_stop', 'p'] < 0.05) / n_neurons
+low_pass = np.sum(btc_df.loc[btc_df['filt'] == 'low_pass', 'p'] < 0.05) / n_neurons
+
 sns.set_context('talk')
 f, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 5), dpi=150)
 
@@ -81,6 +97,10 @@ ax2.plot(time_vector, crypto_filt, label='Low pass', color=sns.color_palette('Se
 
 ax2.legend(loc='center left', bbox_to_anchor=(1, 0.8), frameon=False)
 ax2.set(ylabel='Normalized Ethereum value', xlabel='Time (s)')
+
+ax3.bar(np.arange(3), [(high_pass - no_filt) * 100, (band_stop - no_filt) * 100, (low_pass - no_filt) * 100])
+ax3.set(ylabel='Change in % significant neurons', ylim=[-20.1, 10.1])
+ax3.set_xticklabels(['High\npass', 'Band\nstop', 'Low\npass'], rotation=0)
 
 plt.tight_layout()
 sns.despine(trim=True)

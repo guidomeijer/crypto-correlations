@@ -18,8 +18,8 @@ from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProj
 
 # Settings
 BIN_SIZE = 60  # seconds
-TICKER = 'BTC'
-NAME = 'Bitcoin'
+TICKER = 'ETH'
+NAME = 'Ethereum'
 FILT = {'high_pass': 0.3, 'band_stop': [0.3, 2], 'low_pass': 2}
 CACHE_DIR = '/media/guido/Data/AllenNeuropixel'
 
