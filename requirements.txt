@@ -1,4 +1,5 @@
-allensdk
-Historic-Crypto
-statsmodels
-ibllib
+ibllib==2.0.1
+allensdk==2.12.2
+Historic-Crypto==0.1.4
+statsmodels==0.12.2
+pandas==1.3.2

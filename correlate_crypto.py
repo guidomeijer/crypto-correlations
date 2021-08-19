@@ -15,13 +15,13 @@ from scipy.stats import pearsonr
 import matplotlib.pyplot as plt
 import seaborn as sns
 from Historic_Crypto import HistoricalData
-from ibllib.atlas import BrainRegions
+from ibllib.atlas.regions import BrainRegions
 from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProjectCache
 
 # Settings
 BIN_SIZE = 60  # seconds
-TICKER = 'BTC'
-NAME = 'Bitcoin'
+TICKER = 'ETH'
+NAME = 'Ethereum'
 PLOT = True
 MIN_R = 0.85
 CACHE_DIR = '/media/guido/Data/AllenNeuropixel'
@@ -110,26 +110,33 @@ for i, session_id in enumerate(sessions.index.values):
         if (r > MIN_R) & PLOT:
             time_vector = np.linspace(0, activity_vector.shape[0]*BIN_SIZE, activity_vector.shape[0]) / 60
             sns.set_context('talk')
+            if TICKER == 'BTC':
+                crypto_color = sns.color_palette('colorblind')[0]
+            elif TICKER == 'ETH':
+                crypto_color = sns.color_palette('colorblind')[3]
             f, ax1 = plt.subplots(1, 1, figsize=(6, 5), dpi=150)
-            lns1 = ax1.plot(time_vector, activity_vector, color=sns.color_palette('colorblind')[0],
+            lns1 = ax1.plot(time_vector, activity_vector, color=sns.color_palette('colorblind')[7],
                             label='Firing rate (spikes/s)')
             ax1.set(xlabel='Time (min)', title=these_units.loc[unit_id]['region'],
                     ylabel='Firing rate (spikes/s)')
-            ax1.tick_params(axis='y', labelcolor=sns.color_palette('colorblind')[0])
-            ax1.yaxis.label.set_color(sns.color_palette('colorblind')[0])
+            #ax1.tick_params(axis='y', labelcolor=sns.color_palette('colorblind')[7])
+            ax1.tick_params(axis='y', labelcolor=[.3, .3, .3])
+            #ax1.yaxis.label.set_color(sns.color_palette('colorblind')[7])
+            ax1.yaxis.label.set_color([.3, .3, .3])
             ax2 = ax1.twinx()
             lns2 = ax2.plot(time_vector, crypto_vector[:activity_vector.shape[0]],
-                            color=sns.color_palette('colorblind')[3],
+                            color=crypto_color,
                             label=f'Price of {NAME} (USD)')
             ax2.set_ylabel(f'Value of {NAME} (USD)', rotation=270, va='bottom')
-            #ax2.set(ylabel=f'Value of {NAME} (USD)')
-            ax2.tick_params(axis='y', labelcolor=sns.color_palette('colorblind')[3])
-            ax2.yaxis.label.set_color(sns.color_palette('colorblind')[3])
+            #ax2.set(ylabel=f'Value of {NAM
+            ax2.tick_params(axis='y', labelcolor=crypto_color)
+            ax2.yaxis.label.set_color(crypto_color)
             #labs = [l.get_label() for l in lns1 + lns2]
             #ax1.legend(lns1 + lns2, labs, frameon=False)
             sns.despine(ax=ax1, top=True, right=False, trim=True)
             sns.despine(ax=ax2, top=True, right=False, trim=True)
             plt.tight_layout()
+
             plt.savefig(join(this_fig_dir, f'{TICKER}_ses-{session_id}_unit-{unit_id}'))
             plt.close(f)
 
