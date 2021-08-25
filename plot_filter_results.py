@@ -7,7 +7,7 @@ By: Guido Meijer
 
 import numpy as np
 import datetime
-from os.path import join
+from os import mkdir
 from os.path import join, realpath, dirname, exists
 import pandas as pd
 import seaborn as sns
@@ -77,6 +77,11 @@ high_pass = np.sum(btc_df.loc[btc_df['filt'] == 'high_pass', 'p'] < 0.05) / n_ne
 band_stop = np.sum(btc_df.loc[btc_df['filt'] == 'band_stop', 'p'] < 0.05) / n_neurons
 low_pass = np.sum(btc_df.loc[btc_df['filt'] == 'low_pass', 'p'] < 0.05) / n_neurons
 
+# Plot
+fig_dir = join(dirname(realpath(__file__)), 'exported_figs')
+if not exists(fig_dir):
+    mkdir(fig_dir)
+
 sns.set_context('talk')
 f, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 5), dpi=150)
 
@@ -104,4 +109,4 @@ ax3.set_xticklabels(['High\npass', 'Band\nstop', 'Low\npass'], rotation=0)
 
 plt.tight_layout()
 sns.despine(trim=True)
-
+plt.savefig(join(fig_dir, 'correlate_filter'))
