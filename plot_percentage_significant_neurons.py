@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.stats.multitest import fdrcorrection
 
-# Load in data (run correlate_crypto and correlate_random first)
+# Load in data
 data_dir = join(dirname(realpath(__file__)), 'data')
 btc_df = pd.read_csv(join(data_dir, 'Bitcoin_correlations.csv'))
 eth_df = pd.read_csv(join(data_dir, 'Ethereum_correlations.csv'))
